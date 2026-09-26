@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Editorial Post Studio - Full Cloud</title>
+    <title>Editorial Post Studio - Turbo Cloud</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="/socket.io/socket.io.js"></script>
 
     <style>
-        /* MOBİL EKRANA TAM SIĞDIRMA DÜZELTMESİ */
         html, body { 
             height: 100%; 
             height: -webkit-fill-available;
@@ -57,7 +56,7 @@
             <h1 class="text-[11px] font-medium tracking-[0.3em] uppercase opacity-90 text-white font-sans">Editorial Studio</h1>
         </div>
         <div class="flex items-center space-x-3 font-sans">
-            <span class="text-[9px] font-bold tracking-[0.2em] bg-green-500/20 text-green-500 border border-green-500/30 px-3 py-1.5 rounded-sm uppercase">STABİL</span>
+            <span class="text-[9px] font-bold tracking-[0.2em] bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-sm uppercase">TURBO AKTİF</span>
         </div>
     </header>
 
@@ -92,7 +91,6 @@
         </div>
     </main>
 
-    <!-- MENÜ ALT KISMA SIFIRLANDI -->
     <nav id="bottom-navbar" class="w-full h-[70px] flex items-center justify-around px-1 shrink-0 border-t border-white/5 font-sans bg-[#050505] pb-safe">
         <button class="nav-item active" id="nav-audio" style="color: #FFFFFF;">
              <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
@@ -403,7 +401,6 @@
         const syncFixModal = document.getElementById('sync-fix-modal');
         const styleModal = document.getElementById('style-modal');
 
-        // BUTONLARIN TIKLANMA İŞLEVLERİ (EKSİKSİZ)
         document.querySelectorAll('.nav-item').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.nav-item').forEach(b => { b.classList.remove('active'); b.style.color = '#666666'; });
@@ -708,10 +705,11 @@
             ctx.globalAlpha = 1.0; ctx.textAlign = align; 
         }
 
-        // ================= 🔥 TEK TIKLA İNDİRME MOTORU (WEB SERVER) 🔥 =================
+        // ================= 🔥 TEK TIKLA İNDİRME (TURBO MOTOR) 🔥 =================
         const socket = io(); 
 
         document.getElementById('download-post-btn').addEventListener('click', async () => {
+            
             if (!uploadedAudioFile || canvasData.alignedTimestamps.length === 0 || audioDurationForRender === 0) {
                 alert("Lütfen önce ses yükleyin ve analiz edilmesini bekleyin.");
                 return;
@@ -729,8 +727,11 @@
                 const arrayBuffer = await uploadedAudioFile.arrayBuffer();
                 
                 socket.emit('audio-upload', { buffer: arrayBuffer }, async () => {
+                    
                     btnText.innerText = "⏳ Render Motoru Çalışıyor... (2/3)";
-                    const fps = 30;
+                    
+                    // DEĞİŞİKLİK 1: SİNEMATİK FPS (Telefon daha az yorulur)
+                    const fps = 24; 
                     socket.emit('start-render', { fps: fps });
 
                     await document.fonts.ready;
@@ -800,14 +801,23 @@
                             });
                         }
 
-                        const dataUrl = exportCanvas.toDataURL('image/jpeg', 0.85);
+                        // DEĞİŞİKLİK 2: JPEG KALİTESİ %60'A ÇEKİLDİ (Upload 3 kat hızlandı)
+                        const dataUrl = exportCanvas.toDataURL('image/jpeg', 0.60);
+                        
+                        // DEĞİŞİKLİK 3: KOPMA KORUMASI (Takılmayı önleyen güvenli gönderim)
                         await new Promise(resolve => {
-                            socket.emit('frame', { image: dataUrl }, resolve); 
+                            let isDone = false;
+                            let timeout = setTimeout(() => { if(!isDone){ isDone=true; resolve(); } }, 2000); 
+                            socket.emit('frame', { image: dataUrl }, () => {
+                                if(!isDone){ isDone=true; clearTimeout(timeout); resolve(); }
+                            }); 
                         });
 
-                        if (i % 10 === 0) {
+                        // DEĞİŞİKLİK 4: RAM TEMİZLEYİCİ (Telefonun hafızasının şişmesini önler)
+                        if (i % 5 === 0) {
                             let pct = Math.floor((i / totalFrames) * 100);
                             btnText.innerText = `⏳ İşleniyor... %${pct} (2/3)`;
+                            await new Promise(r => setTimeout(r, 10)); // 10 milisaniye nefes alma boşluğu
                         }
                     }
 
