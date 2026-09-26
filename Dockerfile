@@ -1,5 +1,5 @@
-FROM node:18-bullseye
-RUN apt-get update && apt-get install -y ffmpeg
+FROM node:18-alpine
+RUN apk update && apk add ffmpeg
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
