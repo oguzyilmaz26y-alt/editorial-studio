@@ -2,17 +2,26 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- EKRAN SIĞDIRMA İÇİN EN KRİTİK ETİKET BURADA -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Editorial Post Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- Aynı sunucuda çalıştığı için sadece bunu eklemek yeterli -->
     <script src="/socket.io/socket.io.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #E0E0E0; overscroll-behavior-y: none; }
-        .post-canvas-area { border-radius: 2px; box-shadow: 0 25px 50px rgba(0,0,0,0.9); transition: all 0.4s; aspect-ratio: 9/16; width: 260px; }
+        /* YENİ: MOBİLDE EKRAN KAYMASINI VE TAŞMASINI ÖNLEYEN DÜZELTME */
+        html, body { 
+            height: 100%; 
+            height: -webkit-fill-available; /* iOS Safari için tam dolgu */
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; /* Dış taşmaları gizle */
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #E0E0E0; }
+        
+        .post-canvas-area { border-radius: 2px; box-shadow: 0 25px 50px rgba(0,0,0,0.9); transition: all 0.4s; aspect-ratio: 9/16; width: 260px; max-height: 60vh; }
         .hidden-section { display: none !important; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; color: #666; transition: color 0.2s; cursor: pointer; background: transparent; border: none; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; color: #666; transition: color 0.2s; cursor: pointer; background: transparent; border: none; padding: 10px 0; }
         .nav-item:active { transform: scale(0.95); }
         .nav-item * { pointer-events: none; } 
         .nav-item svg { width: 22px; height: 22px; margin-bottom: 3px; }
@@ -24,15 +33,15 @@
         .theme-btn.active { border-color: #FFF; transform: scale(0.98); background: #222; }
     </style>
 </head>
-<body class="h-screen flex flex-col relative overflow-hidden text-white" id="app-body">
+<body class="flex flex-col relative" id="app-body">
 
-    <header id="main-header" class="flex justify-between items-center px-5 py-4 shrink-0 z-20 border-b border-white/5 bg-[#050505]">
+    <header id="main-header" class="flex justify-between items-center px-5 py-3 shrink-0 z-20 border-b border-white/5 bg-[#050505]">
         <h1 class="text-[11px] font-medium tracking-[0.3em] uppercase opacity-90">Editorial Studio</h1>
         <span class="text-[9px] font-bold tracking-[0.2em] bg-green-500/20 text-green-500 border border-green-500/30 px-3 py-1.5 rounded-sm uppercase">STABİL</span>
     </header>
 
-    <main class="flex-1 flex flex-col min-h-0 p-4 relative bg-[#0A0A0A]">
-        <div class="flex-1 w-full flex items-center justify-center min-h-0 relative py-1">
+    <main class="flex-1 flex flex-col p-4 relative bg-[#0A0A0A] overflow-y-auto hide-scrollbar">
+        <div class="w-full flex items-center justify-center relative py-1 mb-4 mt-2">
             <div id="p-canvas-box" class="post-canvas-area flex flex-col items-center justify-center relative overflow-hidden shrink-0">
                 <button id="p-expand-btn" class="p-expand-trigger absolute top-3 right-3 text-black/40 hover:text-black transition active:scale-95 bg-white/20 p-1.5 rounded-sm shadow-sm backdrop-blur-md z-50">
                     <svg class="p-icon-expand w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
@@ -50,7 +59,7 @@
             </div>
         </div>
 
-        <div id="section-post-controls" class="w-full max-w-sm mx-auto shrink-0 mt-3 pb-2 transition-all duration-300 font-sans flex flex-col">
+        <div id="section-post-controls" class="w-full max-w-sm mx-auto shrink-0 mt-auto pb-4 transition-all duration-300 font-sans flex flex-col">
             <button id="download-post-btn" class="w-full btn-active-luxury py-3.5 rounded-sm font-bold text-xs shadow-xl active:scale-95 transition flex items-center justify-center space-x-2 tracking-[0.15em] uppercase">
                 <svg id="download-icon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 <span id="download-btn-text">VİDEOYU RENDERLA</span>
@@ -58,7 +67,8 @@
         </div>
     </main>
 
-    <nav id="bottom-navbar" class="w-full h-[70px] flex items-center justify-around px-1 shrink-0 pb-2 border-t border-white/5 font-sans bg-[#050505]">
+    <!-- MENÜ ALT KISMA SIFIRLANDI -->
+    <nav id="bottom-navbar" class="w-full h-[70px] flex items-center justify-around px-1 shrink-0 border-t border-white/5 font-sans bg-[#050505] pb-safe">
         <button class="nav-item active" id="nav-audio" style="color: #FFFFFF;">
              <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
             <span class="text-[8.5px] font-semibold text-center uppercase tracking-[0.15em] mt-1.5">Ses</span>
@@ -81,7 +91,7 @@
         </button>
     </nav>
 
-    <!-- MODALLAR -->
+    <!-- ESTETİK MODALI -->
     <div id="style-modal" class="hidden-section fixed inset-0 z-[1000] flex items-end justify-center bg-black/95 backdrop-blur-sm font-sans">
         <div class="bg-[#0A0A0A] rounded-t-xl w-full max-w-md p-6 flex flex-col space-y-6 max-h-[85vh] overflow-y-auto border-t border-white/10 shadow-2xl">
             <div class="flex justify-between items-center pb-3 border-b border-white/10">
@@ -101,31 +111,38 @@
                 </div>
             </div>
             <div class="flex flex-col space-y-3 bg-[#111] p-4 rounded-sm border border-white/5">
-                <div class="flex justify-between items-center mb-2"><label class="text-[9px] font-bold text-white/50 uppercase">Punto</label><span id="font-size-display" class="text-[10px] font-bold text-black bg-white px-2 py-0.5 rounded-sm">40px</span></div>
+                <div class="flex justify-between items-center mb-2"><label class="text-[9px] font-bold text-white/50 uppercase">Punto (Boyut)</label><span id="font-size-display" class="text-[10px] font-bold text-black bg-white px-2 py-0.5 rounded-sm">40px</span></div>
                 <input type="range" id="font-size-slider" min="20" max="90" value="40" class="w-full">
+            </div>
+            <div class="flex flex-col space-y-3 bg-[#111] p-4 rounded-sm border border-white/5">
+                <div class="flex justify-between items-center mb-2"><label class="text-[9px] font-bold text-white/50 uppercase">Satır Genişliği</label><span id="line-width-display" class="text-[10px] font-bold text-black bg-white px-2 py-0.5 rounded-sm">%60</span></div>
+                <input type="range" id="line-width-slider" min="40" max="95" value="60" class="w-full">
             </div>
             <button id="apply-style-btn" class="w-full btn-active-luxury py-3.5 rounded-sm font-bold text-[11px] mt-2 tracking-[0.2em] uppercase">Kapat & Uygula</button>
         </div>
     </div>
 
+    <!-- SES MODALI -->
     <div id="audio-modal" class="hidden-section fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 font-sans">
         <div class="bg-[#0A0A0A] rounded-sm w-full max-w-sm flex flex-col overflow-hidden border border-white/10 shadow-2xl p-6 text-center">
-             <h3 class="font-bold text-white text-[11px] tracking-[0.2em] uppercase mb-2">Ses Yükle (Deepgram)</h3>
+             <h3 class="font-bold text-white text-[11px] tracking-[0.2em] uppercase mb-2">Ses Yükle (Deepgram AI)</h3>
              <input type="file" id="audio-upload" accept="audio/*" class="w-full text-sm text-white/50 file:mr-4 file:py-2.5 file:px-4 file:rounded-sm file:border-0 file:text-[10px] file:font-bold file:bg-white file:text-black hover:file:bg-white/80 transition mb-4 cursor-pointer">
              <audio id="audio-player" controls class="w-full hidden-section mb-4 rounded-sm border border-white/10"></audio>
              <button id="close-audio-modal" class="w-full bg-[#111] text-white/60 py-3.5 rounded-sm font-bold text-[11px] tracking-[0.2em] uppercase border border-white/10 hover:text-white transition">Kapat</button>
         </div>
     </div>
 
+    <!-- METİN MODALI -->
     <div id="text-edit-modal" class="hidden-section fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 font-sans">
         <div class="bg-[#0A0A0A] rounded-sm w-full max-w-sm flex flex-col overflow-hidden border border-white/10 shadow-2xl p-6 text-center">
-             <h3 class="font-bold text-white text-[11px] tracking-[0.2em] uppercase mb-2">Sahne Metin Böl</h3>
+             <h3 class="font-bold text-white text-[11px] tracking-[0.2em] uppercase mb-2">Sahne Sahne Metin Böl</h3>
              <textarea id="text-editor" class="w-full h-48 bg-[#111] text-white border border-white/10 rounded-sm p-3 text-sm focus:outline-none focus:border-white/40 mb-4 resize-none leading-relaxed font-sans"></textarea>
              <button id="save-text-btn" class="w-full btn-active-luxury py-3.5 rounded-sm font-bold text-[11px] tracking-[0.2em] uppercase mb-3">Kaydet</button>
              <button id="close-text-modal" class="w-full bg-[#111] text-white/60 py-3.5 rounded-sm font-bold text-[11px] tracking-[0.2em] uppercase border border-white/10 hover:text-white transition">Kapat</button>
         </div>
     </div>
 
+    <!-- SENKRONİZASYON MODALI -->
     <div id="sync-fix-modal" class="hidden-section fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 font-sans">
         <div class="bg-[#0A0A0A] rounded-sm w-full max-w-sm flex flex-col overflow-hidden border border-white/10 shadow-2xl p-6 text-center">
              <h3 class="font-bold text-white text-[11px] tracking-[0.2em] uppercase mb-2">Hassas Senkronizasyon</h3>
@@ -138,6 +155,7 @@
         </div>
     </div>
 
+    <!-- ÖNİZLEME MODALI -->
     <div id="captions-modal" class="hidden-section fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 font-sans">
         <div class="bg-[#0A0A0A] rounded-sm w-full max-w-sm flex flex-col overflow-hidden border border-white/10 shadow-2xl p-6 text-center">
              <h3 class="font-bold text-white text-[11px] tracking-[0.2em] uppercase mb-2">Canlı Test</h3>
@@ -183,9 +201,9 @@
 
         function updateChunksFromText() {
             const textVal = document.getElementById('text-editor').value;
-            const lines = textVal.split('\\n');
+            const lines = textVal.split('\n');
             let userWordsInfo = [];
-            lines.forEach((line, lineIdx) => { line.trim().split(/\\s+/).filter(x => x.length > 0).forEach(w => userWordsInfo.push({ word: w, lineIdx: lineIdx })); });
+            lines.forEach((line, lineIdx) => { line.trim().split(/\s+/).filter(x => x.length > 0).forEach(w => userWordsInfo.push({ word: w, lineIdx: lineIdx })); });
 
             canvasData.alignedTimestamps = [];
             for (let i = 0; i < userWordsInfo.length; i++) {
@@ -242,7 +260,7 @@
                 document.getElementById('full-transcript-box').value = canvasData.mainText;
                 
                 let def = ""; let wArr = canvasData.mainText.split(" ");
-                for(let i=0; i<wArr.length; i+=8) def += wArr.slice(i, i+8).join(" ") + "\\n";
+                for(let i=0; i<wArr.length; i+=8) def += wArr.slice(i, i+8).join(" ") + "\n";
                 document.getElementById('text-editor').value = def.trim();
                 
                 updateChunksFromText(); renderPostSpansToPreview();
@@ -352,7 +370,7 @@
                 
                 const chunkLayouts = []; 
                 if (canvasData.customChunks.length === 0) {
-                    const wArr = canvasData.mainText.split(/\\s+/).filter(x=>x.length>0);
+                    const wArr = canvasData.mainText.split(/\s+/).filter(x=>x.length>0);
                     canvasData.customChunks.push({ startIndex: 0, endIndex: wArr.length-1, words: wArr });
                 }
                 for (let i = 0; i < canvasData.customChunks.length; i++) {
