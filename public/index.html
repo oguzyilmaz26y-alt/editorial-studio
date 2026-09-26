@@ -2,42 +2,63 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <!-- EKRAN SIĞDIRMA İÇİN EN KRİTİK ETİKET BURADA -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Editorial Post Studio</title>
+    <title>Editorial Post Studio - Full Cloud</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="/socket.io/socket.io.js"></script>
+
     <style>
-        /* YENİ: MOBİLDE EKRAN KAYMASINI VE TAŞMASINI ÖNLEYEN DÜZELTME */
+        /* MOBİL EKRANA TAM SIĞDIRMA DÜZELTMESİ */
         html, body { 
             height: 100%; 
-            height: -webkit-fill-available; /* iOS Safari için tam dolgu */
+            height: -webkit-fill-available;
             margin: 0; 
             padding: 0; 
-            overflow: hidden; /* Dış taşmaları gizle */
+            overflow: hidden;
         }
-        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #E0E0E0; }
-        
-        .post-canvas-area { border-radius: 2px; box-shadow: 0 25px 50px rgba(0,0,0,0.9); transition: all 0.4s; aspect-ratio: 9/16; width: 260px; max-height: 60vh; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: #050505; 
+            color: #E0E0E0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .post-canvas-area {
+            border-radius: 2px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.9);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            aspect-ratio: 9/16;
+            width: 260px;
+            max-height: 60vh;
+        }
         .hidden-section { display: none !important; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; color: #666; transition: color 0.2s; cursor: pointer; background: transparent; border: none; padding: 10px 0; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; color: #666666; transition: color 0.2s; cursor: pointer; background: transparent; border: none; padding: 10px 0; }
         .nav-item:active { transform: scale(0.95); }
         .nav-item * { pointer-events: none; } 
         .nav-item svg { width: 22px; height: 22px; margin-bottom: 3px; }
-        .btn-active-luxury { background-color: #FFF !important; color: #000 !important; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15); transition: all 0.3s ease; }
+        .btn-active-luxury { background-color: #FFFFFF !important; color: #000000 !important; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15); transition: all 0.3s ease; }
+
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #FFF; cursor: pointer; margin-top: -6px; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #333; border-radius: 4px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #FFFFFF; cursor: pointer; margin-top: -6px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #333333; border-radius: 4px; }
         .theme-btn { border: 1px solid #333; transition: all 0.2s; background: #111; }
         .theme-btn.active { border-color: #FFF; transform: scale(0.98); background: #222; }
     </style>
 </head>
 <body class="flex flex-col relative" id="app-body">
 
-    <header id="main-header" class="flex justify-between items-center px-5 py-3 shrink-0 z-20 border-b border-white/5 bg-[#050505]">
-        <h1 class="text-[11px] font-medium tracking-[0.3em] uppercase opacity-90">Editorial Studio</h1>
-        <span class="text-[9px] font-bold tracking-[0.2em] bg-green-500/20 text-green-500 border border-green-500/30 px-3 py-1.5 rounded-sm uppercase">STABİL</span>
+    <header id="main-header" class="flex justify-between items-center px-5 py-3 shrink-0 z-20 border-b border-white/5 bg-[#050505] transition-all duration-300">
+        <div class="flex items-center space-x-4">
+            <h1 class="text-[11px] font-medium tracking-[0.3em] uppercase opacity-90 text-white font-sans">Editorial Studio</h1>
+        </div>
+        <div class="flex items-center space-x-3 font-sans">
+            <span class="text-[9px] font-bold tracking-[0.2em] bg-green-500/20 text-green-500 border border-green-500/30 px-3 py-1.5 rounded-sm uppercase">STABİL</span>
+        </div>
     </header>
 
     <main class="flex-1 flex flex-col p-4 relative bg-[#0A0A0A] overflow-y-auto hide-scrollbar">
@@ -49,7 +70,11 @@
                 </button>
                 <div id="p-content-wrapper" class="w-full relative" style="flex: 1; margin: 0 auto; height: 100%;">
                     <div id="p-icon-container" style="position: absolute; top: 33%; left: 50%; transform: translate(-50%, -50%); display: flex; justify-content: center;">
-                        <svg id="headphone-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-3a8 8 0 0 1 16 0v3"></path><rect x="2" y="14" width="4" height="5" rx="1"></rect><rect x="18" y="14" width="4" height="5" rx="1"></rect></svg>
+                        <svg id="headphone-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 14v-3a8 8 0 0 1 16 0v3"></path>
+                            <rect x="2" y="14" width="4" height="5" rx="1"></rect>
+                            <rect x="18" y="14" width="4" height="5" rx="1"></rect>
+                        </svg>
                     </div>
                     <div id="p-preview-main" style="position: absolute; top: 45%; width: 100%; display: flex; flex-direction: column; align-items: center;"></div>
                     <div id="p-brand-name" style="position: absolute; top: 88%; width: 100%; display: flex; justify-content: center; font-weight: 300; color: #86868B; font-family: 'Jost', sans-serif; text-transform: uppercase;">
@@ -73,25 +98,29 @@
              <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
             <span class="text-[8.5px] font-semibold text-center uppercase tracking-[0.15em] mt-1.5">Ses</span>
         </button>
+
         <button class="nav-item" id="nav-text-edit">
             <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path></svg>
            <span class="text-[8.5px] font-semibold text-center uppercase tracking-[0.15em] mt-1.5">Metin</span>
        </button>
+       
        <button class="nav-item" id="nav-sync-fix">
             <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
            <span class="text-[8.5px] font-semibold text-center uppercase tracking-[0.15em] mt-1.5">Senkron</span>
        </button>
+
        <button class="nav-item" id="nav-style">
             <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
             <span class="text-[8.5px] font-semibold text-center uppercase tracking-[0.15em] mt-1.5">Estetik</span>
         </button>
+
         <button class="nav-item" id="nav-captions">
              <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
             <span class="text-[8.5px] font-semibold text-center uppercase tracking-[0.15em] mt-1.5">Test Et</span>
         </button>
     </nav>
 
-    <!-- ESTETİK MODALI -->
+    <!-- MODALLAR -->
     <div id="style-modal" class="hidden-section fixed inset-0 z-[1000] flex items-end justify-center bg-black/95 backdrop-blur-sm font-sans">
         <div class="bg-[#0A0A0A] rounded-t-xl w-full max-w-md p-6 flex flex-col space-y-6 max-h-[85vh] overflow-y-auto border-t border-white/10 shadow-2xl">
             <div class="flex justify-between items-center pb-3 border-b border-white/10">
@@ -111,43 +140,47 @@
                 </div>
             </div>
             <div class="flex flex-col space-y-3 bg-[#111] p-4 rounded-sm border border-white/5">
-                <div class="flex justify-between items-center mb-2"><label class="text-[9px] font-bold text-white/50 uppercase">Punto (Boyut)</label><span id="font-size-display" class="text-[10px] font-bold text-black bg-white px-2 py-0.5 rounded-sm">40px</span></div>
+                <div class="flex justify-between items-center mb-2">
+                    <label class="text-[9px] font-bold tracking-[0.2em] text-white/50 uppercase">Punto (Boyut)</label>
+                    <span id="font-size-display" class="text-[10px] font-bold text-black bg-white px-2 py-0.5 rounded-sm">40px</span>
+                </div>
                 <input type="range" id="font-size-slider" min="20" max="90" value="40" class="w-full">
             </div>
             <div class="flex flex-col space-y-3 bg-[#111] p-4 rounded-sm border border-white/5">
-                <div class="flex justify-between items-center mb-2"><label class="text-[9px] font-bold text-white/50 uppercase">Satır Genişliği</label><span id="line-width-display" class="text-[10px] font-bold text-black bg-white px-2 py-0.5 rounded-sm">%60</span></div>
+                <div class="flex justify-between items-center mb-2">
+                    <label class="text-[9px] font-bold tracking-[0.2em] text-white/50 uppercase">Satır Genişliği</label>
+                    <span id="line-width-display" class="text-[10px] font-bold text-black bg-white px-2 py-0.5 rounded-sm">%60</span>
+                </div>
                 <input type="range" id="line-width-slider" min="40" max="95" value="60" class="w-full">
             </div>
             <button id="apply-style-btn" class="w-full btn-active-luxury py-3.5 rounded-sm font-bold text-[11px] mt-2 tracking-[0.2em] uppercase">Kapat & Uygula</button>
         </div>
     </div>
 
-    <!-- SES MODALI -->
     <div id="audio-modal" class="hidden-section fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 font-sans">
         <div class="bg-[#0A0A0A] rounded-sm w-full max-w-sm flex flex-col overflow-hidden border border-white/10 shadow-2xl p-6 text-center">
              <h3 class="font-bold text-white text-[11px] tracking-[0.2em] uppercase mb-2">Ses Yükle (Deepgram AI)</h3>
+             <p class="text-[10px] text-white/50 mb-6">ElevenLabs vb. ses dosyanı yükle.</p>
              <input type="file" id="audio-upload" accept="audio/*" class="w-full text-sm text-white/50 file:mr-4 file:py-2.5 file:px-4 file:rounded-sm file:border-0 file:text-[10px] file:font-bold file:bg-white file:text-black hover:file:bg-white/80 transition mb-4 cursor-pointer">
              <audio id="audio-player" controls class="w-full hidden-section mb-4 rounded-sm border border-white/10"></audio>
              <button id="close-audio-modal" class="w-full bg-[#111] text-white/60 py-3.5 rounded-sm font-bold text-[11px] tracking-[0.2em] uppercase border border-white/10 hover:text-white transition">Kapat</button>
         </div>
     </div>
 
-    <!-- METİN MODALI -->
     <div id="text-edit-modal" class="hidden-section fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 font-sans">
         <div class="bg-[#0A0A0A] rounded-sm w-full max-w-sm flex flex-col overflow-hidden border border-white/10 shadow-2xl p-6 text-center">
              <h3 class="font-bold text-white text-[11px] tracking-[0.2em] uppercase mb-2">Sahne Sahne Metin Böl</h3>
              <textarea id="text-editor" class="w-full h-48 bg-[#111] text-white border border-white/10 rounded-sm p-3 text-sm focus:outline-none focus:border-white/40 mb-4 resize-none leading-relaxed font-sans"></textarea>
-             <button id="save-text-btn" class="w-full btn-active-luxury py-3.5 rounded-sm font-bold text-[11px] tracking-[0.2em] uppercase mb-3">Kaydet</button>
+             <button id="save-text-btn" class="w-full btn-active-luxury py-3.5 rounded-sm font-bold text-[11px] tracking-[0.2em] uppercase mb-3">Kaydet & Senkronize Et</button>
              <button id="close-text-modal" class="w-full bg-[#111] text-white/60 py-3.5 rounded-sm font-bold text-[11px] tracking-[0.2em] uppercase border border-white/10 hover:text-white transition">Kapat</button>
         </div>
     </div>
 
-    <!-- SENKRONİZASYON MODALI -->
     <div id="sync-fix-modal" class="hidden-section fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 font-sans">
         <div class="bg-[#0A0A0A] rounded-sm w-full max-w-sm flex flex-col overflow-hidden border border-white/10 shadow-2xl p-6 text-center">
              <h3 class="font-bold text-white text-[11px] tracking-[0.2em] uppercase mb-2">Hassas Senkronizasyon</h3>
              <button id="wrap-selection-btn" class="w-full bg-[#111] text-white/80 py-2.5 rounded-sm font-bold text-[10px] tracking-[0.1em] uppercase border border-white/10 transition mb-3">
-                 [ Seçileni İşaretle ]
+                 [ Seçileni İşaretle ( ) ]
              </button>
              <textarea id="full-transcript-box" class="w-full h-40 bg-[#050505] text-white border border-white/40 focus:border-white rounded-sm p-3 text-sm mb-4 resize-none leading-relaxed font-sans"></textarea>
              <button id="apply-sync-btn" class="w-full btn-active-luxury py-3.5 rounded-sm font-bold text-[11px] tracking-[0.2em] uppercase mb-3">Senkronize Et</button>
@@ -155,167 +188,486 @@
         </div>
     </div>
 
-    <!-- ÖNİZLEME MODALI -->
     <div id="captions-modal" class="hidden-section fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 font-sans">
         <div class="bg-[#0A0A0A] rounded-sm w-full max-w-sm flex flex-col overflow-hidden border border-white/10 shadow-2xl p-6 text-center">
-             <h3 class="font-bold text-white text-[11px] tracking-[0.2em] uppercase mb-2">Canlı Test</h3>
-             <button id="start-karaoke-btn" class="w-full btn-active-luxury py-3.5 rounded-sm font-bold text-[11px] tracking-[0.2em] uppercase mb-3 flex justify-center items-center gap-2">Önizlemeyi Oynat</button>
+             <h3 class="font-bold text-white text-[11px] tracking-[0.2em] uppercase mb-2">Canlı Animasyon Testi</h3>
+             <button id="start-karaoke-btn" class="w-full btn-active-luxury py-3.5 rounded-sm font-bold text-[11px] tracking-[0.2em] uppercase mb-3 flex justify-center items-center gap-2">
+                 Önizlemeyi Oynat
+             </button>
              <button id="close-captions-modal" class="w-full bg-[#111] text-white/60 py-3.5 rounded-sm font-bold text-[11px] tracking-[0.2em] uppercase border border-white/10 hover:text-white transition">Kapat</button>
         </div>
     </div>
 
     <script>
+        // ================= KUSURSUZ ELİT RENK PALETİ =================
         const themes = {
             cream: { id: 'cream', name: 'Alabaster', bg: '#DFDBD2', text: '#1A1A1A', highlight: '#000000' },
             charcoal: { id: 'charcoal', name: 'Charcoal', bg: '#242424', text: '#D0D0D0', highlight: '#EDEDED' },
             olive: { id: 'olive', name: 'Deep Olive', bg: '#2E362D', text: '#D0D0D0', highlight: '#EDEDED' },
-            navy: { id: 'navy', name: 'Midnight', bg: '#1A2330', text: '#D0D0D0', highlight: '#EDEDED' }
+            navy: { id: 'navy', name: 'Midnight', bg: '#1A2330', text: '#D0D0D0', highlight: '#EDEDED' },
+            burgundy: { id: 'burgundy', name: 'Oxblood', bg: '#361D20', text: '#D0D0D0', highlight: '#EDEDED' },
+            espresso: { id: 'espresso', name: 'Espresso', bg: '#281B16', text: '#D0D0D0', highlight: '#EDEDED' },
+            ochre: { id: 'ochre', name: 'Ochre', bg: '#6B4E16', text: '#D0D0D0', highlight: '#EDEDED' },
+            rust: { id: 'rust', name: 'Terracotta', bg: '#543024', text: '#D0D0D0', highlight: '#EDEDED' }
         };
-        let activeTheme = 'cream', currentFontSize = 40, currentLineWidth = 60, textAlignment = "center";
-        const fontFam = "'Jost', sans-serif", PHI = 1.618, PREVIEW_OFFSET = 0.10;
-        let uploadedAudioFile = null, audioDurationForRender = 0;
-        let canvasData = { mainText: "Art of Maxims", activeWordIndex: -1, baseTimestamps: [], alignedTimestamps: [], customChunks: [], lastRenderChunkIndex: 0 };
+        let activeTheme = 'cream';
+        let currentFontSize = 40;       
+        let currentLineWidth = 60;      
+        let textAlignment = "center"; 
+        const fontFam = "'Jost', sans-serif";
+        const PHI = 1.618;
+        const PREVIEW_OFFSET = 0.10; 
 
+        let uploadedAudioFile = null;
+        let audioDurationForRender = 0;
+
+        let canvasData = {
+            mainText: "Real success is measured not by what you accumulate, but by the character you build while pursuing it.", 
+            activeWordIndex: -1,
+            baseTimestamps: [],      
+            alignedTimestamps: [],   
+            customChunks: [],
+            lastValidChunk: null,
+            lastRenderChunkIndex: 0
+        };
+
+        const themeSelectorContainer = document.getElementById('theme-selector');
+        
         function initThemes() {
-            const container = document.getElementById('theme-selector');
-            Object.values(themes).forEach(t => {
+            Object.values(themes).forEach(theme => {
                 const btn = document.createElement('button');
-                btn.className = `theme-btn flex flex-col items-center justify-center p-3 rounded-sm ${t.id === activeTheme ? 'active' : ''}`;
-                btn.onclick = () => { activeTheme = t.id; renderPostSpansToPreview(); document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.post-canvas-area').forEach(el => el.style.backgroundColor = t.bg); };
-                btn.innerHTML = `<div class="w-7 h-7 rounded-full mb-2" style="background-color: ${t.bg};"></div><span class="text-[7px] text-white/70">${t.name}</span>`;
-                container.appendChild(btn);
+                btn.className = `theme-btn flex flex-col items-center justify-center p-3 rounded-sm ${theme.id === activeTheme ? 'active' : ''}`;
+                btn.onclick = () => applyTheme(theme.id);
+                btn.innerHTML = `
+                    <div class="w-7 h-7 rounded-full mb-2 shadow-inner border border-white/10" style="background-color: ${theme.bg};"></div>
+                    <span class="text-[7px] font-semibold text-white/70 uppercase tracking-widest">${theme.name}</span>
+                `;
+                themeSelectorContainer.appendChild(btn);
             });
-            document.querySelectorAll('.post-canvas-area').forEach(el => el.style.backgroundColor = themes[activeTheme].bg);
+            applyTheme(activeTheme);
         }
 
-        document.getElementById('font-size-slider').oninput = (e) => { currentFontSize = parseInt(e.target.value); document.getElementById('font-size-display').textContent = currentFontSize + 'px'; renderPostSpansToPreview(); };
-        document.getElementById('line-width-slider').oninput = (e) => { currentLineWidth = parseInt(e.target.value); document.getElementById('line-width-display').textContent = '%' + currentLineWidth; renderPostSpansToPreview(); };
+        function applyTheme(themeId) {
+            activeTheme = themeId;
+            const t = themes[activeTheme];
+            document.querySelectorAll('.post-canvas-area').forEach(el => { el.style.backgroundColor = t.bg; });
+            document.querySelectorAll('.theme-btn').forEach((btn, index) => {
+                if(Object.keys(themes)[index] === themeId) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            renderPostSpansToPreview();
+        }
 
-        ['align-left', 'align-center', 'align-right'].forEach(id => {
-            document.getElementById(id).onclick = (e) => {
-                document.querySelectorAll('.align-btn').forEach(b => { b.className = "align-btn flex-1 py-2 text-[10px] font-bold rounded-sm text-white/50 transition tracking-[0.1em] uppercase"; });
-                e.target.classList.add('btn-active-luxury'); e.target.classList.remove('text-white/50');
-                textAlignment = id.split('-')[1]; renderPostSpansToPreview();
-            };
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeDisplay = document.getElementById('font-size-display');
+        const lineWidthSlider = document.getElementById('line-width-slider');
+        const lineWidthDisplay = document.getElementById('line-width-display');
+
+        fontSizeSlider.oninput = (e) => {
+            currentFontSize = parseInt(e.target.value);
+            fontSizeDisplay.textContent = currentFontSize + 'px';
+            renderPostSpansToPreview();
+        };
+
+        lineWidthSlider.oninput = (e) => {
+            currentLineWidth = parseInt(e.target.value);
+            lineWidthDisplay.textContent = '%' + currentLineWidth;
+            renderPostSpansToPreview();
+        };
+
+        const alignBtns = [document.getElementById('align-left'), document.getElementById('align-center'), document.getElementById('align-right')];
+        alignBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                alignBtns.forEach(b => {
+                    b.className = "align-btn flex-1 py-2 text-[10px] font-bold rounded-sm text-white/50 transition tracking-[0.1em] uppercase font-sans";
+                    b.classList.remove('btn-active-luxury');
+                });
+                btn.classList.add('btn-active-luxury');
+                btn.classList.remove('text-white/50');
+                if (btn.id === 'align-left') textAlignment = 'left';
+                else if (btn.id === 'align-center') textAlignment = 'center';
+                else if (btn.id === 'align-right') textAlignment = 'right';
+                renderPostSpansToPreview();
+            });
         });
 
         function updateChunksFromText() {
             const textVal = document.getElementById('text-editor').value;
             const lines = textVal.split('\n');
             let userWordsInfo = [];
-            lines.forEach((line, lineIdx) => { line.trim().split(/\s+/).filter(x => x.length > 0).forEach(w => userWordsInfo.push({ word: w, lineIdx: lineIdx })); });
+            lines.forEach((line, lineIdx) => {
+                const w = line.trim().split(/\s+/).filter(x => x.length > 0);
+                w.forEach(wordStr => { userWordsInfo.push({ word: wordStr, lineIdx: lineIdx }); });
+            });
 
             canvasData.alignedTimestamps = [];
             for (let i = 0; i < userWordsInfo.length; i++) {
+                let uWord = userWordsInfo[i].word;
                 let wt = canvasData.baseTimestamps[i]; 
-                if (wt) canvasData.alignedTimestamps.push({ word: userWordsInfo[i].word, start: wt.start, end: wt.end });
-                else { let prev = canvasData.alignedTimestamps[i-1]; let s = prev ? prev.end + 0.01 : 0; canvasData.alignedTimestamps.push({ word: userWordsInfo[i].word, start: s, end: s + 0.2 }); }
+                if (wt) canvasData.alignedTimestamps.push({ word: uWord, start: wt.start, end: wt.end });
+                else {
+                    let prev = canvasData.alignedTimestamps[canvasData.alignedTimestamps.length - 1];
+                    let s = prev ? prev.end + 0.01 : 0;
+                    canvasData.alignedTimestamps.push({ word: uWord, start: s, end: s + 0.2 });
+                }
             }
-            for (let i = 0; i < canvasData.alignedTimestamps.length - 1; i++) { if (canvasData.alignedTimestamps[i].end > canvasData.alignedTimestamps[i+1].start) canvasData.alignedTimestamps[i].end = canvasData.alignedTimestamps[i+1].start; }
 
-            canvasData.customChunks = []; let currentLineIdx = -1, currentChunk = null;
+            for (let i = 0; i < canvasData.alignedTimestamps.length - 1; i++) {
+                let current = canvasData.alignedTimestamps[i];
+                let next = canvasData.alignedTimestamps[i+1];
+                if (current.end > next.start) current.end = next.start;
+            }
+
+            canvasData.customChunks = [];
+            let currentLineIdx = -1;
+            let currentChunk = null;
+
             for (let i = 0; i < canvasData.alignedTimestamps.length; i++) {
-                if (userWordsInfo[i].lineIdx !== currentLineIdx) {
-                    currentLineIdx = userWordsInfo[i].lineIdx;
-                    if (currentChunk) { currentChunk.endIndex = i - 1; canvasData.customChunks.push(currentChunk); }
+                let uInfo = userWordsInfo[i];
+                if (uInfo.lineIdx !== currentLineIdx) {
+                    currentLineIdx = uInfo.lineIdx;
+                    if (currentChunk) {
+                        currentChunk.endIndex = i - 1;
+                        canvasData.customChunks.push(currentChunk);
+                    }
                     currentChunk = { startIndex: i, endIndex: i, words: [] };
                 }
-                currentChunk.words.push(canvasData.alignedTimestamps[i].word); currentChunk.endIndex = i;
+                currentChunk.words.push(canvasData.alignedTimestamps[i].word);
+                currentChunk.endIndex = i;
             }
             if (currentChunk) canvasData.customChunks.push(currentChunk);
         }
 
-        const modals = ['audio', 'text-edit', 'sync-fix', 'style', 'captions'];
-        modals.forEach(m => {
-            document.getElementById(`nav-${m}`).onclick = () => document.getElementById(`${m}-modal`).classList.remove('hidden-section');
-            document.getElementById(`close-${m}-modal`).onclick = () => document.getElementById(`${m}-modal`).classList.add('hidden-section');
-        });
-        document.getElementById('apply-style-btn').onclick = () => document.getElementById('style-modal').classList.add('hidden-section');
-        document.getElementById('save-text-btn').onclick = () => { updateChunksFromText(); renderPostSpansToPreview(); document.getElementById('text-edit-modal').classList.add('hidden-section'); };
+        function getPreciseActiveWord(adjustedTime) {
+            if (!canvasData.alignedTimestamps || canvasData.alignedTimestamps.length === 0) return -1;
+            if (adjustedTime < canvasData.alignedTimestamps[0].start) return -1;
 
-        document.getElementById('wrap-selection-btn').onclick = () => {
-            const tBox = document.getElementById('full-transcript-box');
-            if (tBox.selectionStart !== tBox.selectionEnd) {
-                const sel = tBox.value.substring(tBox.selectionStart, tBox.selectionEnd);
-                tBox.value = tBox.value.substring(0, tBox.selectionStart) + "(" + sel + ")" + tBox.value.substring(tBox.selectionEnd);
+            for (let i = 0; i < canvasData.alignedTimestamps.length; i++) {
+                const w = canvasData.alignedTimestamps[i];
+                const nextW = canvasData.alignedTimestamps[i + 1];
+                let maxEnd = nextW ? (nextW.start - w.end < 1.0 ? nextW.start : w.end + 0.4) : w.end + 0.5;
+                if (adjustedTime >= w.start && adjustedTime < maxEnd) return i;
             }
+            return -1;
+        }
+
+        function updateActiveChunkIndex(activeIndex, currentTime) {
+            let chunkIndex = canvasData.lastRenderChunkIndex || 0;
+            if (activeIndex !== -1) {
+                const foundIndex = canvasData.customChunks.findIndex(c => activeIndex >= c.startIndex && activeIndex <= c.endIndex);
+                if (foundIndex !== -1) chunkIndex = foundIndex;
+            } else {
+                for (let i = 0; i < canvasData.customChunks.length; i++) {
+                    let c = canvasData.customChunks[i];
+                    let firstW = canvasData.alignedTimestamps[c.startIndex];
+                    if (firstW && currentTime < firstW.start) { chunkIndex = i; break; }
+                }
+                const lastC = canvasData.customChunks[canvasData.customChunks.length - 1];
+                if (lastC) {
+                    let lastW = canvasData.alignedTimestamps[lastC.endIndex];
+                    if (lastW && currentTime >= lastW.end) chunkIndex = canvasData.customChunks.length - 1;
+                }
+            }
+            canvasData.lastRenderChunkIndex = chunkIndex;
+            return chunkIndex;
+        }
+
+        function buildLines(ctx, wordsObjects, maxWidth) {
+            let lines = [];
+            let currentLine = [];
+            let currentWidth = 0;
+            ctx.font = `300 ${currentFontSize * PHI}px ${fontFam}`;
+            const spaceW = ctx.measureText(" ").width;
+
+            for(let i = 0; i < wordsObjects.length; i++) {
+                let wObj = wordsObjects[i];
+                let mw = ctx.measureText(wObj.word).width;
+                if(currentWidth + mw > maxWidth && currentLine.length > 0) {
+                    lines.push(currentLine);
+                    currentLine = [wObj];
+                    currentWidth = mw + spaceW;
+                } else {
+                    currentLine.push(wObj);
+                    currentWidth += mw + spaceW;
+                }
+            }
+            if(currentLine.length > 0) lines.push(currentLine);
+            return lines;
+        }
+
+        function escapeHTML(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+        const audioModal = document.getElementById('audio-modal');
+        const captionsModal = document.getElementById('captions-modal');
+        const textEditModal = document.getElementById('text-edit-modal'); 
+        const syncFixModal = document.getElementById('sync-fix-modal');
+        const styleModal = document.getElementById('style-modal');
+
+        // BUTONLARIN TIKLANMA İŞLEVLERİ (EKSİKSİZ)
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(b => { b.classList.remove('active'); b.style.color = '#666666'; });
+                btn.classList.add('active'); btn.style.color = '#FFFFFF';
+            });
+        });
+
+        document.getElementById('nav-audio').onclick = () => audioModal.classList.remove('hidden-section');
+        document.getElementById('close-audio-modal').onclick = () => audioModal.classList.add('hidden-section');
+        document.getElementById('nav-captions').onclick = () => captionsModal.classList.remove('hidden-section');
+        document.getElementById('close-captions-modal').onclick = () => captionsModal.classList.add('hidden-section');
+        document.getElementById('nav-text-edit').onclick = () => textEditModal.classList.remove('hidden-section');
+        document.getElementById('close-text-modal').onclick = () => textEditModal.classList.add('hidden-section');
+        document.getElementById('nav-sync-fix').onclick = () => syncFixModal.classList.remove('hidden-section');
+        document.getElementById('close-sync-modal').onclick = () => syncFixModal.classList.add('hidden-section');
+        document.getElementById('nav-style').onclick = () => styleModal.classList.remove('hidden-section');
+        document.getElementById('close-style-modal').onclick = () => styleModal.classList.add('hidden-section');
+        document.getElementById('apply-style-btn').onclick = () => styleModal.classList.add('hidden-section');
+
+        document.getElementById('save-text-btn').onclick = () => {
+            updateChunksFromText();
+            renderPostSpansToPreview();
+            textEditModal.classList.add('hidden-section');
         };
 
-        const deepgramApiKey = "9622729dc570ad66c722da34d807f5e002ebd6bb"; 
+        document.getElementById('wrap-selection-btn').onclick = () => {
+            const transcriptBox = document.getElementById('full-transcript-box');
+            const start = transcriptBox.selectionStart;
+            const end = transcriptBox.selectionEnd;
+            if (start !== end) {
+                const text = transcriptBox.value;
+                const selectedText = text.substring(start, end);
+                transcriptBox.value = text.substring(0, start) + "(" + selectedText + ")" + text.substring(end);
+                transcriptBox.focus();
+                transcriptBox.setSelectionRange(start, end + 2); 
+            } else alert("Lütfen önce düzeltmek istediğiniz kelimeleri farenizle/parmağınızla seçin.");
+        };
+
+        document.getElementById('apply-sync-btn').onclick = () => {
+            const transcriptText = document.getElementById('full-transcript-box').value;
+            const regex = /\(([^)]+)\)/g;
+            let match; let foundAny = false;
+
+            while ((match = regex.exec(transcriptText)) !== null) {
+                foundAny = true;
+                const phrase = match[1];
+                const wordsToFix = phrase.trim().split(/\s+/).map(w => w.toLowerCase().replace(/[^a-z0-9]/g, ''));
+                if (wordsToFix.length < 2) continue; 
+
+                for (let i = 0; i <= canvasData.baseTimestamps.length - wordsToFix.length; i++) {
+                    let isMatch = true;
+                    for (let j = 0; j < wordsToFix.length; j++) {
+                        const targetW = canvasData.baseTimestamps[i + j].word.toLowerCase().replace(/[^a-z0-9]/g, '');
+                        if (!targetW.includes(wordsToFix[j]) && !wordsToFix[j].includes(targetW)) { isMatch = false; break; }
+                    }
+
+                    if (isMatch) {
+                        const startW = canvasData.baseTimestamps[i];
+                        const endW = canvasData.baseTimestamps[i + wordsToFix.length - 1];
+                        const totalDur = endW.end - startW.start;
+                        const durPerWord = totalDur / wordsToFix.length; 
+                        let currentStart = startW.start;
+                        for (let j = 0; j < wordsToFix.length; j++) {
+                            const wObj = canvasData.baseTimestamps[i + j];
+                            wObj.start = currentStart;
+                            wObj.end = currentStart + durPerWord;
+                            currentStart = wObj.end;
+                        }
+                        break; 
+                    }
+                }
+            }
+            if(!foundAny) { alert("Önce metin kutusundan kelime seçip 'İşaretle' butonuna basarak parantez içine almalısınız."); return; }
+            updateChunksFromText();
+            renderPostSpansToPreview();
+            syncFixModal.classList.add('hidden-section');
+            alert("Senkronizasyon işlemi başarıyla uygulandı!");
+        };
+
+        const audioUpload = document.getElementById('audio-upload');
         const audioPlayer = document.getElementById('audio-player');
 
-        document.getElementById('audio-upload').addEventListener('change', async (e) => {
-            const file = e.target.files[0]; if (!file) return;
-            uploadedAudioFile = file;
-            audioPlayer.src = URL.createObjectURL(file);
+        // 🔥 İŞTE SENİN O ORİJİNAL ŞİFREN BURADA! 🔥
+        const deepgramApiKey = "9622729dc570ad66c722da34d807f5e002ebd6bb"; 
+
+        audioUpload.addEventListener('change', async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            uploadedAudioFile = file; 
+            
+            const objectUrl = URL.createObjectURL(file);
+            audioPlayer.src = objectUrl;
             audioPlayer.classList.remove('hidden-section');
-            audioPlayer.onloadedmetadata = () => audioDurationForRender = audioPlayer.duration;
-            document.getElementById('p-preview-main').innerHTML = '<span style="color:#666;">Deepgram AI Metni Çıkarıyor... ⏳</span>';
+
+            audioPlayer.onloadedmetadata = () => { audioDurationForRender = audioPlayer.duration; };
+
+            document.getElementById('p-preview-main').innerHTML = '<span style="color:#666; font-size: 14px; font-weight: 500; font-family: \'Inter\', sans-serif; text-align: center; margin-top: 40px; letter-spacing: 0.1em; text-transform: uppercase;">Deepgram AI <br>Metni Çıkarıyor... ⏳</span>';
+            document.getElementById('p-icon-container').style.display = 'none';
             
             try {
-                const res = await fetch("https://api.deepgram.com/v1/listen?model=nova-2&smart_format=true", { method: "POST", headers: { "Authorization": `Token ${deepgramApiKey}`, "Content-Type": file.type }, body: file });
-                const data = await res.json();
-                canvasData.baseTimestamps = data.results.channels[0].alternatives[0].words.map(w => ({ word: w.punctuated_word || w.word, start: w.start, end: w.end }));
-                canvasData.mainText = canvasData.baseTimestamps.map(w => w.word).join(" ");
+                const response = await fetch("https://api.deepgram.com/v1/listen?model=nova-2&smart_format=true", {
+                    method: "POST",
+                    headers: { "Authorization": `Token ${deepgramApiKey}`, "Content-Type": file.type },
+                    body: file
+                });
+                
+                if (!response.ok) throw new Error("API Hatası: Lütfen Deepgram API Anahtarını kontrol edin.");
+                const data = await response.json();
+                const deepgramWords = data.results.channels[0].alternatives[0].words;
+                
+                canvasData.baseTimestamps = deepgramWords.map(w => ({ word: w.punctuated_word || w.word, start: w.start, end: w.end }));
+                const cleanWords = canvasData.baseTimestamps.map(w => w.word);
+                canvasData.mainText = cleanWords.join(" ");
                 document.getElementById('full-transcript-box').value = canvasData.mainText;
                 
-                let def = ""; let wArr = canvasData.mainText.split(" ");
-                for(let i=0; i<wArr.length; i+=8) def += wArr.slice(i, i+8).join(" ") + "\n";
-                document.getElementById('text-editor').value = def.trim();
+                let defaultEditorText = "";
+                for(let i=0; i<cleanWords.length; i+=8) { defaultEditorText += cleanWords.slice(i, i+8).join(" ") + "\n"; }
+                document.getElementById('text-editor').value = defaultEditorText.trim();
                 
-                updateChunksFromText(); renderPostSpansToPreview();
-                alert("Metin çıkarıldı! Düzenleyebilirsiniz.");
-            } catch (err) { alert("API Hatası."); }
+                updateChunksFromText();
+                document.getElementById('p-icon-container').style.display = 'flex';
+                renderPostSpansToPreview();
+                alert("İşlem Başarılı! 'Metin Böl' menüsüne girerek sahnelerinizi ayarlayabilirsiniz.");
+                
+            } catch (error) {
+                console.error("Deepgram API Hatası:", error);
+                alert("Çeviri başarısız oldu. API şifrenizin limitini veya süresini kontrol edin.");
+                document.getElementById('p-icon-container').style.display = 'flex';
+            }
         });
 
-        let syncFrame;
-        function syncK() {
+        let syncAnimationFrame;
+        function syncKaraokeWithAudio() {
             if (audioPlayer.paused && canvasData.activeWordIndex === -1) return;
-            let ct = audioPlayer.currentTime + PREVIEW_OFFSET;
-            let idx = -1;
-            for (let i = 0; i < canvasData.alignedTimestamps.length; i++) {
-                let w = canvasData.alignedTimestamps[i]; let nw = canvasData.alignedTimestamps[i + 1];
-                let max = nw ? (nw.start - w.end < 1.0 ? nw.start : w.end + 0.4) : w.end + 0.5;
-                if (ct >= w.start && ct < max) { idx = i; break; }
+            const newActiveIndex = getPreciseActiveWord(audioPlayer.currentTime + PREVIEW_OFFSET);
+            if (newActiveIndex !== canvasData.activeWordIndex) {
+                canvasData.activeWordIndex = newActiveIndex;
+                renderPostSpansToPreview();
             }
-            if (idx !== canvasData.activeWordIndex) { canvasData.activeWordIndex = idx; renderPostSpansToPreview(); }
-            syncFrame = requestAnimationFrame(syncK);
+            syncAnimationFrame = requestAnimationFrame(syncKaraokeWithAudio);
         }
 
-        document.getElementById('start-karaoke-btn').onclick = () => { document.getElementById('captions-modal').classList.add('hidden-section'); if(audioPlayer.src){ canvasData.activeWordIndex = -1; audioPlayer.currentTime = 0; audioPlayer.play(); }};
-        audioPlayer.onplay = () => syncFrame = requestAnimationFrame(syncK);
-        audioPlayer.onpause = () => cancelAnimationFrame(syncFrame);
-        
+        document.getElementById('start-karaoke-btn').onclick = () => {
+            captionsModal.classList.add('hidden-section');
+            if (audioPlayer.src && canvasData.alignedTimestamps && canvasData.alignedTimestamps.length > 0) {
+                canvasData.activeWordIndex = -1;
+                audioPlayer.currentTime = 0;
+                audioPlayer.play();
+            } else alert("Simülasyon için lütfen önce bir ses yükleyin.");
+        };
+
+        audioPlayer.addEventListener('play', () => { if (canvasData.alignedTimestamps.length > 0) syncAnimationFrame = requestAnimationFrame(syncKaraokeWithAudio); });
+        audioPlayer.addEventListener('pause', () => cancelAnimationFrame(syncAnimationFrame));
+        audioPlayer.addEventListener('ended', () => { cancelAnimationFrame(syncAnimationFrame); canvasData.activeWordIndex = -1; renderPostSpansToPreview(); });
+
+        let isPostCanvasExpanded = false;
+        document.querySelectorAll('.p-expand-trigger').forEach(btn => {
+            btn.onclick = () => {
+                isPostCanvasExpanded = !isPostCanvasExpanded;
+                const activeBox = document.getElementById('p-canvas-box');
+                const expandIcon = activeBox.querySelector('.p-icon-expand');
+                const shrinkIcon = activeBox.querySelector('.p-icon-shrink');
+                
+                if(isPostCanvasExpanded) {
+                    activeBox.classList.add('fixed', 'z-[1000]', 'shadow-[0_20px_60px_rgba(0,0,0,0.9)]');
+                    activeBox.style.top = '50%'; activeBox.style.left = '50%';
+                    activeBox.style.transform = 'translate(-50%, -50%)';
+                    activeBox.style.width = 'min(90vw, calc(85vh * 0.5625))';
+                    activeBox.style.height = 'min(calc(90vw * 1.777), 85vh)';
+                    document.getElementById('section-post-controls').classList.add('hidden-section');
+                    document.getElementById('bottom-navbar').classList.add('hidden-section');
+                    document.getElementById('main-header').classList.add('hidden-section');
+                    expandIcon.classList.add('hidden'); shrinkIcon.classList.remove('hidden');
+                } else {
+                    activeBox.classList.remove('fixed', 'z-[1000]', 'shadow-[0_20px_60px_rgba(0,0,0,0.9)]');
+                    activeBox.style.top = ''; activeBox.style.left = ''; activeBox.style.transform = '';
+                    activeBox.style.width = "260px"; activeBox.style.height = "auto"; 
+                    document.getElementById('section-post-controls').classList.remove('hidden-section');
+                    document.getElementById('bottom-navbar').classList.remove('hidden-section');
+                    document.getElementById('main-header').classList.remove('hidden-section');
+                    expandIcon.classList.remove('hidden'); shrinkIcon.classList.add('hidden');
+                }
+                setTimeout(renderPostSpansToPreview, 10);
+            };
+        });
+
         function renderPostSpansToPreview() {
             const t = themes[activeTheme];
-            const pMain = document.getElementById('p-preview-main');
-            pMain.innerHTML = ''; 
+            document.getElementById('p-preview-main').innerHTML = ''; 
+            const dummyCanvas = document.createElement('canvas');
+            const ctx = dummyCanvas.getContext('2d');
+            let mw = 1080 * (currentLineWidth / 100);
+
             const isAudioLoaded = !!audioPlayer.src && canvasData.alignedTimestamps.length > 0;
-            let ct = isAudioLoaded ? (audioPlayer.currentTime + PREVIEW_OFFSET) : 0;
+            let currentTime = isAudioLoaded ? (audioPlayer.currentTime + PREVIEW_OFFSET) : 0;
+            let currentChunkIndex = updateActiveChunkIndex(canvasData.activeWordIndex, currentTime);
             
-            let cIdx = 0;
-            for (let i = 0; i < canvasData.customChunks.length; i++) {
-                let fw = canvasData.alignedTimestamps[canvasData.customChunks[i].startIndex];
-                if (fw && ct < fw.start) { cIdx = i; break; }
-                cIdx = i;
+            let activeChunk = null;
+            if (canvasData.customChunks.length > 0) {
+                activeChunk = canvasData.customChunks[currentChunkIndex] || canvasData.customChunks[0];
+            } else {
+                const wArr = canvasData.mainText.split(/\s+/).filter(x=>x.length>0);
+                activeChunk = { startIndex: 0, endIndex: wArr.length-1, words: wArr };
             }
-            if(canvasData.activeWordIndex !== -1) cIdx = canvasData.customChunks.findIndex(c => canvasData.activeWordIndex >= c.startIndex && canvasData.activeWordIndex <= c.endIndex);
-            
-            let chunk = canvasData.customChunks[cIdx] || { startIndex: 0, words: canvasData.mainText.split(" ") };
-            let html = chunk.words.map((w, i) => {
-                let isActive = (chunk.startIndex + i === canvasData.activeWordIndex);
-                return `<span style="font-weight: 300; ${isActive ? `color: ${t.highlight}; opacity: 1;` : `opacity: 0.85;`}">${w}</span>`;
-            }).join(" ");
-            
-            pMain.innerHTML = `<div style="text-align: ${textAlignment}; font-family: ${fontFam}; font-weight: 300; color: ${t.text}; width: 100%; font-size: ${currentFontSize * PHI * (260/1080)}px; line-height: 1.4;">${html}</div>`;
-            
-            const svg = document.getElementById('headphone-svg'); svg.style.color = t.text; svg.style.width = (currentFontSize * 1.618 * (260/1080)) + 'px';
-            const br = document.getElementById('p-brand-name'); br.style.color = t.text; br.style.fontSize = (currentFontSize / 2.618 * (260/1080)) + 'px';
-            document.getElementById('p-canvas-box').style.backgroundColor = t.bg;
+
+            if (!activeChunk || activeChunk.words.length === 0) return;
+
+            let wordObjs = activeChunk.words.map((w, i) => ({ word: w, index: activeChunk.startIndex + i }));
+            ctx.font = `300 ${currentFontSize * PHI}px ${fontFam}`;
+            let linesMain = buildLines(ctx, wordObjs, mw);
+
+            linesMain.forEach(lineObjArr => {
+                const div = document.createElement('div');
+                let htmlStr = "";
+                lineObjArr.forEach(wObj => {
+                    let wStr = escapeHTML(wObj.word);
+                    if(wObj.index === canvasData.activeWordIndex) {
+                        htmlStr += `<span style="font-weight: 300; color: ${t.highlight}; opacity: 1;">${wStr}</span> `;
+                    } else {
+                        htmlStr += `<span style="opacity: 0.85;">${wStr}</span> `; 
+                    }
+                });
+                div.innerHTML = htmlStr.trim();
+                div.style.width = '100%'; div.style.textAlign = textAlignment; div.style.height = 'auto';
+                div.style.whiteSpace = 'nowrap';
+                document.getElementById('p-preview-main').appendChild(div);
+            });
+            updatePostScale();
         }
 
-        // ================= 🔥 TEK TIKLA İNDİRME MOTORU 🔥 =================
-        const socket = io(); 
+        function updatePostScale() {
+            const t = themes[activeTheme];
+            const activeBox = document.getElementById('p-canvas-box');
+            const rect = activeBox.getBoundingClientRect();
+            
+            const logicalW = 1080; 
+            const currentWidth = rect.width || 260;
+            const scaleRatio = currentWidth / logicalW; 
+
+            const headphoneSvg = document.getElementById('headphone-svg');
+            headphoneSvg.style.color = t.text; 
+            const iconSize = currentFontSize * 1.618 * scaleRatio; 
+            headphoneSvg.style.width = iconSize + 'px';
+            headphoneSvg.style.height = iconSize + 'px';
+
+            const brandFontSize = currentFontSize / 2.618; 
+            const pBrand = document.getElementById('p-brand-name');
+            pBrand.style.fontSize = (brandFontSize * scaleRatio) + 'px';
+            pBrand.style.letterSpacing = (brandFontSize * 1.2 * scaleRatio) + 'px'; 
+            pBrand.style.fontWeight = '300'; 
+            pBrand.style.fontFamily = fontFam;
+            pBrand.style.color = t.text;
+            pBrand.style.opacity = "0.5";
+
+            const pMain = document.getElementById('p-preview-main');
+            pMain.style.fontSize = (currentFontSize * PHI * scaleRatio) + 'px';
+            pMain.style.lineHeight = 1.4; 
+            pMain.style.fontFamily = fontFam;
+            pMain.style.fontWeight = '300';
+            pMain.style.color = t.text; 
+        }
+
+        window.addEventListener('resize', () => { renderPostSpansToPreview(); });
+        document.addEventListener("DOMContentLoaded", () => { initThemes(); renderPostSpansToPreview(); });
 
         let headphoneImgCache = null;
         const loadSVGSync = (color) => {
@@ -331,16 +683,24 @@
 
         function drawLineObjects(ctx, lineArr, renderActiveIndex, drawX, currentY, normalFont, boldFont, baseColor, activeColor, align, maxWidth, logicalWidth) {
             if (lineArr.length === 0) return;
-            let totalWidth = 0; ctx.font = normalFont; const spaceW = ctx.measureText(" ").width;
+
+            let totalWidth = 0;
+            ctx.font = normalFont;
+            const spaceW = ctx.measureText(" ").width;
+            
             lineArr.forEach((wObj, i) => { ctx.font = normalFont; totalWidth += ctx.measureText(wObj.word).width; if(i < lineArr.length - 1) totalWidth += spaceW; });
+
             let segX = drawX;
             if (align === 'center') segX = (logicalWidth - totalWidth) / 2;
             else if (align === 'right') { let startX = (logicalWidth - maxWidth) / 2; segX = logicalWidth - startX - totalWidth; } 
             else { segX = (logicalWidth - maxWidth) / 2; }
+
             ctx.textAlign = 'left';
             lineArr.forEach((wObj, i) => {
                 let isActive = (wObj.index === renderActiveIndex);
-                ctx.font = normalFont; ctx.fillStyle = isActive ? activeColor : baseColor; ctx.globalAlpha = isActive ? 1.0 : 0.85; 
+                ctx.font = normalFont; 
+                ctx.fillStyle = isActive ? activeColor : baseColor;
+                ctx.globalAlpha = isActive ? 1.0 : 0.85; 
                 ctx.fillText(wObj.word, segX, currentY);
                 segX += ctx.measureText(wObj.word).width;
                 if(i < lineArr.length - 1) { ctx.font = normalFont; segX += ctx.measureText(" ").width; }
@@ -348,113 +708,156 @@
             ctx.globalAlpha = 1.0; ctx.textAlign = align; 
         }
 
+        // ================= 🔥 TEK TIKLA İNDİRME MOTORU (WEB SERVER) 🔥 =================
+        const socket = io(); 
+
         document.getElementById('download-post-btn').addEventListener('click', async () => {
-            if (!uploadedAudioFile) return alert("Lütfen önce ses yükleyin.");
-            
-            const btn = document.getElementById('download-post-btn');
-            const txt = document.getElementById('download-btn-text');
-            btn.disabled = true; txt.innerText = "⏳ Veriler İletiliyor...";
+            if (!uploadedAudioFile || canvasData.alignedTimestamps.length === 0 || audioDurationForRender === 0) {
+                alert("Lütfen önce ses yükleyin ve analiz edilmesini bekleyin.");
+                return;
+            }
 
-            const arrayBuffer = await uploadedAudioFile.arrayBuffer();
-            socket.emit('audio-upload', { buffer: arrayBuffer }, async () => {
-                txt.innerText = "🚀 Render Başladı...";
-                socket.emit('start-render', { fps: 30 });
-                
-                const t = themes[activeTheme];
-                await document.fonts.ready;
-                await loadSVGSync(t.text);
+            const downloadBtn = document.getElementById('download-post-btn');
+            const btnText = document.getElementById('download-btn-text');
+            const t = themes[activeTheme];
 
-                const exCanvas = document.createElement('canvas'); exCanvas.width = 1080; exCanvas.height = 1920;
-                const exCtx = exCanvas.getContext('2d'); exCtx.imageSmoothingEnabled = true; exCtx.imageSmoothingQuality = 'high';
-                const maxWidth = 1080 * (currentLineWidth / 100);
+            downloadBtn.disabled = true;
+            btnText.innerText = "⏳ Sunucuya Bağlanıyor...";
+
+            try {
+                btnText.innerText = "⏳ Ses Gönderiliyor... (1/3)";
+                const arrayBuffer = await uploadedAudioFile.arrayBuffer();
                 
-                const chunkLayouts = []; 
-                if (canvasData.customChunks.length === 0) {
-                    const wArr = canvasData.mainText.split(/\s+/).filter(x=>x.length>0);
-                    canvasData.customChunks.push({ startIndex: 0, endIndex: wArr.length-1, words: wArr });
-                }
-                for (let i = 0; i < canvasData.customChunks.length; i++) {
-                    const c = canvasData.customChunks[i];
-                    const wObjs = c.words.map((w, idx) => ({ word: w, index: c.startIndex + idx }));
-                    exCtx.font = `300 ${currentFontSize * PHI}px ${fontFam}`;
+                socket.emit('audio-upload', { buffer: arrayBuffer }, async () => {
+                    btnText.innerText = "⏳ Render Motoru Çalışıyor... (2/3)";
+                    const fps = 30;
+                    socket.emit('start-render', { fps: fps });
+
+                    await document.fonts.ready;
+                    await loadSVGSync(t.text);
+
+                    const exportCanvas = document.createElement('canvas');
+                    exportCanvas.width = 1080;
+                    exportCanvas.height = 1920;
+                    const exportCtx = exportCanvas.getContext('2d');
+                    exportCtx.imageSmoothingEnabled = true;
+                    exportCtx.imageSmoothingQuality = 'high';
+                    const maxWidth = 1080 * (currentLineWidth / 100);
                     
-                    let lines = []; let currentLine = []; let currentWidth = 0; const spaceW = exCtx.measureText(" ").width;
-                    for(let j = 0; j < wObjs.length; j++) {
-                        let mw = exCtx.measureText(wObjs[j].word).width;
-                        if(currentWidth + mw > maxWidth && currentLine.length > 0) { lines.push(currentLine); currentLine = [wObjs[j]]; currentWidth = mw + spaceW; } 
-                        else { currentLine.push(wObjs[j]); currentWidth += mw + spaceW; }
+                    const chunkLayouts = []; 
+                    if (canvasData.customChunks.length === 0) {
+                        const wArr = canvasData.mainText.split(/\s+/).filter(x=>x.length>0);
+                        canvasData.customChunks.push({ startIndex: 0, endIndex: wArr.length-1, words: wArr });
                     }
-                    if(currentLine.length > 0) lines.push(currentLine);
-                    chunkLayouts.push(lines);
-                }
+                    for (let i = 0; i < canvasData.customChunks.length; i++) {
+                        const c = canvasData.customChunks[i];
+                        const wObjs = c.words.map((w, idx) => ({ word: w, index: c.startIndex + idx }));
+                        exportCtx.font = `300 ${currentFontSize * PHI}px ${fontFam}`;
+                        chunkLayouts.push(buildLines(exportCtx, wObjs, maxWidth));
+                    }
 
-                const totalFrames = Math.ceil(audioDurationForRender * 30);
+                    const totalFrames = Math.ceil(audioDurationForRender * fps);
 
-                for (let i = 0; i < totalFrames; i++) {
-                    const currentTime = i / 30;
-                    exCtx.fillStyle = t.bg; exCtx.fillRect(0, 0, 1080, 1920);
+                    for (let i = 0; i < totalFrames; i++) {
+                        const currentTime = i / fps;
+                        exportCtx.fillStyle = t.bg;
+                        exportCtx.fillRect(0, 0, 1080, 1920);
 
-                    const renderActiveIndex = getPreciseActiveWord(currentTime);
-                    let currentChunkIndex = updateActiveChunkIndex(renderActiveIndex, currentTime);
-                    const lMain = chunkLayouts[currentChunkIndex] || [];
-                    
-                    exCtx.save();
-                    const brandFontSize = currentFontSize / 2.618;
-                    exCtx.font = `300 ${brandFontSize}px ${fontFam}`; exCtx.fillStyle = t.text; exCtx.globalAlpha = 0.5; exCtx.textAlign = "center"; exCtx.textBaseline = "middle";
-                    if ('letterSpacing' in exCtx) exCtx.letterSpacing = (brandFontSize * 1.2) + "px";
-                    exCtx.fillText("art of maxims", 1080 / 2, 1920 * 0.88);
-                    exCtx.restore();
+                        const renderActiveIndex = getPreciseActiveWord(currentTime);
+                        let currentChunkIndex = updateActiveChunkIndex(renderActiveIndex, currentTime);
+                        const lMain = chunkLayouts[currentChunkIndex] || [];
+                        let drawX = 1080 / 2;
 
-                    exCtx.textBaseline = "middle";
-                    const iconSize = currentFontSize * 1.618; let iconY = (1920 * 0.33) - (iconSize / 2); let iconX = (1080 - iconSize) / 2;
-                    exCtx.globalAlpha = 0.88; exCtx.drawImage(headphoneImgCache, iconX, iconY, iconSize, iconSize); exCtx.globalAlpha = 1.0;
+                        exportCtx.save();
+                        const brandFontSize = currentFontSize / 2.618;
+                        exportCtx.font = `300 ${brandFontSize}px ${fontFam}`;
+                        exportCtx.fillStyle = t.text;
+                        exportCtx.globalAlpha = 0.5;
+                        exportCtx.textAlign = "center";
+                        exportCtx.textBaseline = "middle";
+                        if ('letterSpacing' in exportCtx) exportCtx.letterSpacing = (brandFontSize * 1.2) + "px";
+                        exportCtx.fillText("art of maxims", 1080 / 2, 1920 * 0.88);
+                        exportCtx.restore();
 
-                    let currentY = 1920 * 0.45; const pLineHeight = currentFontSize * PHI * 1.4;
-                    const normMainF = `300 ${currentFontSize * PHI}px ${fontFam}`;
+                        exportCtx.textBaseline = "middle";
+                        const iconSize = currentFontSize * 1.618;
+                        let iconY = (1920 * 0.33) - (iconSize / 2);
+                        let iconX = (1080 - iconSize) / 2;
 
-                    if (lMain.length > 0) {
-                        lMain.forEach(lineObjArr => {
-                            drawLineObjects(exCtx, lineObjArr, renderActiveIndex, 1080/2, currentY, normMainF, normMainF, t.text, t.highlight, textAlignment, maxWidth, 1080);
-                            currentY += pLineHeight;
+                        exportCtx.globalAlpha = 0.88;
+                        exportCtx.drawImage(headphoneImgCache, iconX, iconY, iconSize, iconSize);
+                        exportCtx.globalAlpha = 1.0;
+
+                        let currentY = 1920 * 0.45;
+                        const pLineHeight = currentFontSize * PHI * 1.4;
+                        const normMainF = `300 ${currentFontSize * PHI}px ${fontFam}`;
+                        const boldMainF = `300 ${currentFontSize * PHI}px ${fontFam}`;
+
+                        if (lMain.length > 0) {
+                            lMain.forEach(lineObjArr => {
+                                drawLineObjects(exportCtx, lineObjArr, renderActiveIndex, drawX, currentY, normMainF, boldMainF, t.text, t.highlight, textAlignment, maxWidth, 1080);
+                                currentY += pLineHeight;
+                            });
+                        }
+
+                        const dataUrl = exportCanvas.toDataURL('image/jpeg', 0.85);
+                        await new Promise(resolve => {
+                            socket.emit('frame', { image: dataUrl }, resolve); 
                         });
+
+                        if (i % 10 === 0) {
+                            let pct = Math.floor((i / totalFrames) * 100);
+                            btnText.innerText = `⏳ İşleniyor... %${pct} (2/3)`;
+                        }
                     }
 
-                    const dataUrl = exCanvas.toDataURL('image/jpeg', 0.85);
-                    await new Promise(r => socket.emit('frame', { image: dataUrl }, r));
-                    if (i % 15 === 0) txt.innerText = `⏳ İşleniyor... %${Math.floor((i / totalFrames) * 100)}`;
-                }
-                socket.emit('finish-frames');
-                txt.innerText = "📦 MP4 Mühürleniyor...";
-            });
+                    btnText.innerText = "⏳ Mühürleniyor... (3/3)";
+                    socket.emit('finish-frames');
+                });
+
+                socket.on('render-complete', (data) => {
+                    const fileUrl = `/download/${data.id}`;
+                    
+                    // OTOMATİK TARAYICI İNDİRMESİ
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = fileUrl;
+                    a.download = 'Editorial_Reels_Pro.mp4';
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => document.body.removeChild(a), 100);
+
+                    downloadBtn.disabled = false;
+                    btnText.innerText = "📥 MP4 DOSYASINI İNDİR";
+                    
+                    downloadBtn.style.backgroundColor = "#10B981"; 
+                    downloadBtn.style.color = "#FFFFFF";
+                    downloadBtn.classList.remove("btn-active-luxury");
+                    
+                    let dlIcon = document.getElementById('download-icon');
+                    if(dlIcon) {
+                        dlIcon.outerHTML = `<svg id="download-icon" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>`;
+                    }
+
+                    downloadBtn.onclick = (e) => {
+                        e.preventDefault();
+                        window.open(fileUrl, '_blank');
+                    };
+                });
+
+                socket.on('render-error', (errMsg) => {
+                    alert("Sunucu Render Hatası: " + errMsg);
+                    btnText.innerText = "VİDEOYU RENDERLA";
+                    downloadBtn.disabled = false;
+                });
+
+            } catch (err) {
+                console.error(err);
+                alert("Bir hata oluştu: " + err.message);
+                btnText.innerText = "VİDEOYU RENDERLA";
+                downloadBtn.disabled = false;
+            }
         });
-
-        socket.on('render-complete', (data) => {
-            const btn = document.getElementById('download-post-btn');
-            const txt = document.getElementById('download-btn-text');
-            
-            // Tarayıcıdan otomatik indirme!
-            const a = document.createElement('a');
-            a.href = `/download/${data.id}`;
-            a.download = 'Editorial_Reels_Pro.mp4';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-
-            txt.innerText = "✅ GALERİYE İNDİRİLDİ!";
-            btn.style.backgroundColor = "#10B981";
-            btn.style.color = "#FFFFFF";
-
-            setTimeout(() => {
-                txt.innerText = "YENİ VİDEO RENDERLA";
-                btn.style.backgroundColor = "#FFF";
-                btn.style.color = "#000";
-                btn.disabled = false;
-                document.getElementById('download-icon').style.display = 'block';
-            }, 4000);
-        });
-
-        socket.on('render-error', (err) => { alert("Hata: " + err); document.getElementById('download-post-btn').disabled = false; });
-        document.addEventListener("DOMContentLoaded", () => { initThemes(); });
     </script>
 </body>
 </html>
